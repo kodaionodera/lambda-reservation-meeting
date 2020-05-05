@@ -52,6 +52,7 @@ end
 def notify_slack(body)
   uri = URI.parse(ENV['WEB_HOOKS_URI'])
 
+  # チャンネル名はlambdaでは変更する
   payload = {
     channel: "#test",
     text: slack_text(body)
