@@ -1,12 +1,13 @@
 # ローカル用
-# require 'dotenv'
+require 'dotenv'
 require 'net/http'
-require "json/add/core"
+require 'json/add/core'
+require 'jwt'
 
 # envの読み込み(ローカル開発用)
-# Dotenv.load
+Dotenv.load
 
-def lambda_handler(event:, context:)
+def lambda_handler
   response = post_zoom_api
   res_body = JSON.parse(response.body)
 
@@ -28,18 +29,24 @@ def post_zoom_api
     agenda: "進捗報告"
   }.to_json
 
-  # 有効期限が決まっているのでAPI KEYを使うように変更する
   headers = {
     "Content-Type" => "application/json",
-    "Authorization" => "Bearer #{ENV['JWT']}"
+    "Authorization" => "Bearer #{generate_jwt}"
    }
 
   req = Net::HTTP::Post.new(uri.path)
   req.body = payload
-
   req.initialize_http_header(headers)
-
   http.request(req)
+end
+
+def generate_jwt
+  payload = {
+      iss: ENV['API_KEY'],
+      exp: Time.now.to_i + 36000
+  }
+
+  JWT.encode(payload, ENV['API_SECRET'], 'HS256')
 end
 
 def notify_slack(body)
