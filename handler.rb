@@ -1,13 +1,13 @@
 # ローカル用
-require 'dotenv'
+# require 'dotenv'
 require 'net/http'
 require 'json/add/core'
 require 'jwt'
 
 # envの読み込み(ローカル開発用)
-Dotenv.load
+# Dotenv.load
 
-def lambda_handler
+def lambda_handler(event:, context:)
   response = post_zoom_api
   res_body = JSON.parse(response.body)
 
