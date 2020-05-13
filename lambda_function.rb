@@ -52,9 +52,10 @@ end
 def notify_slack(body)
   uri = URI.parse(ENV['WEB_HOOKS_URI'])
 
-  # チャンネル名はlambdaでは変更する
   payload = {
-    channel: "#test",
+    username: "デイリーお知らせbot",
+    icon_emoji: ":spiral_calendar_pad",
+    channel: ENV['CHANNEL'],
     text: slack_text(body)
   }.to_json
 
@@ -62,8 +63,29 @@ def notify_slack(body)
 end
 
 def slack_text(body)
+  person = call_spread_sheet(ENV['SPREAD_SHEET_URL'])
+
   <<-EOS
     <!here> デイリーが始まります
+
+    デイリー担当者: #{person}
     #{body['join_url']}
   EOS
+end
+
+def call_spread_sheet(uri)
+  uri = URI.parse(uri)
+  http = Net::HTTP.new(uri.hostname, uri.port)
+  req = Net::HTTP::Get.new(uri.request_uri)
+  http.use_ssl = true
+  res = http.request(req)
+
+  case res
+  when Net::HTTPOK
+    return res.body.force_encoding("UTF-8")
+  when Net::HTTPFound
+    call_spread_sheet(res["location"])
+  else
+　　break
+  end
 end
