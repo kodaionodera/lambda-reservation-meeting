@@ -22,11 +22,15 @@ def post_zoom_api
 
   payload = {
     topic: "デイリー",
-    type: "1",
-    duration: "40",
+    type: '2',
+    duration: '40',
     timezone: "Asia/Tokyo",
     password: "",
-    agenda: "進捗報告"
+    agenda: "進捗報告",
+    settings: {
+      join_before_host: 'true',
+      waiting_room: 'false'
+    }
   }.to_json
 
   headers = {
