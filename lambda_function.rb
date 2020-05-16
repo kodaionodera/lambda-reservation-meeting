@@ -1,5 +1,5 @@
 # ローカル用
-require 'dotenv'
+# require 'dotenv'
 require 'net/http'
 require 'json/add/core'
 require 'jwt'
@@ -8,7 +8,7 @@ require './slack.rb'
 require './spread_sheet.rb'
 
 # envの読み込み(ローカル開発用)
-Dotenv.load
+# Dotenv.load
 
 def lambda_handler(event:, context:)
   response = Zoom.call

@@ -1,3 +1,4 @@
+# GASを叩きデイリー当番を取得するクラス
 class SpreadSheet
   class << self
     def call(path)

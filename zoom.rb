@@ -1,3 +1,4 @@
+# Zoom APIにpostし会議室を予約するクラス
 class Zoom
   class << self
     def call
@@ -6,6 +7,15 @@ class Zoom
       http = Net::HTTP.new(uri.host, uri.port)
       http.use_ssl = true
 
+      req = Net::HTTP::Post.new(uri.path)
+      req.body = payload
+      req.initialize_http_header(headers)
+      http.request(req)
+    end
+
+    private
+
+    def payload
       payload = {
         topic: "デイリー",
         type: '2',
@@ -18,19 +28,14 @@ class Zoom
           waiting_room: 'false'
         }
       }.to_json
+    end
 
+    def headers
       headers = {
         "Content-Type" => "application/json",
         "Authorization" => "Bearer #{generate_jwt}"
        }
-
-      req = Net::HTTP::Post.new(uri.path)
-      req.body = payload
-      req.initialize_http_header(headers)
-      http.request(req)
     end
-
-    private
 
     def generate_jwt
       payload = {
