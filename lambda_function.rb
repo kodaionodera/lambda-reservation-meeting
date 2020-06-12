@@ -11,8 +11,10 @@ require './spread_sheet.rb'
 # Dotenv.load
 
 def lambda_handler(event:, context:)
-  response = Zoom.call
-  res_body = JSON.parse(response.body)
+  join_url = Zoom.reservation_meeting
 
-  Slack.call(res_body)
+  deily_person = SpreadSheet.get_deily_person
+
+  slack = Slack.new(join_url, deily_person)
+  slack.notify
 end

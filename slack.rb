@@ -1,32 +1,33 @@
 # Slack通知をするクラス
 class Slack
-  class << self
-    def call(body)
-      uri = URI.parse(ENV['WEB_HOOKS_URI'])
+  def initialize(join_url, deily_person)
+    @join_url = join_url
+    @deily_person = deily_person
+  end
 
-      Net::HTTP.post_form(uri, { payload: payload(body) })
-    end
+  def notify
+    uri = URI.parse(ENV['WEB_HOOKS_URI'])
+    Net::HTTP.post_form(uri, { payload: payload })
+  end
 
-    private
+  private
 
-    def payload(body)
-      payload = {
-        username: "デイリーお知らせbot",
-        icon_emoji: ":spiral_calendar_pad",
-        channel: "#test",
-        text: text(body)
-      }.to_json
-    end
+  def payload
+    {
+      username: "デイリーお知らせbot",
+      icon_emoji: ":spiral_calendar_pad",
+      channel: "#test",
+      text: text
+    }.to_json
+  end
 
-    def text(body)
-      person = SpreadSheet.call(ENV['SPREAD_SHEET_URL'])
+  def text
+    <<-EOS
+      <!here> 会議が始まります。
+      担当者：#{@deily_person}
 
-      <<-EOS
-        <!here> デイリーが始まります
-
-        デイリー担当者: #{person}
-        #{body['join_url']}
-      EOS
-    end
+      Zoom会議には以下URLで入れます。
+      #{@join_url}
+    EOS
   end
 end
