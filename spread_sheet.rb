@@ -1,7 +1,7 @@
 # GASを叩きデイリー当番を取得するクラス
 class SpreadSheet
   class << self
-    def get_deily_person(uri = ENV['SPREAD_SHEET_URL'])
+    def fetch_daily_person(uri = ENV['SPREAD_SHEET_URL'])
       uri = URI.parse(uri)
       http = Net::HTTP.new(uri.hostname, uri.port)
       req = Net::HTTP::Get.new(uri.request_uri)
@@ -12,7 +12,7 @@ class SpreadSheet
       when Net::HTTPOK
         res.body.force_encoding("UTF-8")
       when Net::HTTPFound
-        get_deily_person(res["location"])
+        fetch_daily_person(res["location"])
       end
     end
   end
